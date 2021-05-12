@@ -1,4 +1,6 @@
 package com.mieto.environment.terrain;
 
-public class Terrain {
+import com.mieto.IDifficulty;
+
+public abstract class Terrain implements IDifficulty {
 }

@@ -1,4 +1,9 @@
 package com.mieto.environment.weather;
 
-public class Weather {
+import com.mieto.IDifficulty;
+
+public abstract class Weather implements IDifficulty {
+
+
+
 }

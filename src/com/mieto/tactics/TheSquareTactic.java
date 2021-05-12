@@ -1,4 +1,4 @@
 package com.mieto.tactics;
 
-public class TheSquareTactic extends TacticType{
+public class TheSquareTactic extends Tactic {
 }

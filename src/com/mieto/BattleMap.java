@@ -5,40 +5,47 @@ import com.mieto.environment.weather.Weather;
 import com.mieto.tactics.Tactic;
 import com.mieto.warriors.Warrior;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BattleMap {
-    public Warrior[] mapWarriors = {};
-    public Warrior[] teamOneWarriors = {};
-    public Warrior[] teamTwoWarriors = {};
+    public List<Warrior> teamOneWarriors = new ArrayList<>();
+    public List<Warrior> teamTwoWarriors = new ArrayList<>();
     public Terrain terrain;
     public Weather weather;
-    public int teamOneDeadWarriors = 0;
-    public int teamTwoDeadWarriors = 0;
-    public Tactic[] tactics = {};
+    public Tactic[] tactics = new Tactic[2];
 
-
-    public void deleteWarrior(Warrior warrior){
-
+    public Tactic[] getTactics() {
+        return tactics;
     }
 
-    public void saveWarrior(Warrior warrior){
-
+    public void deleteWarrior(Warrior warrior, int team) {
+        switch (team){
+            case 1:
+                teamOneWarriors.remove(warrior);
+                break;
+            case 2:
+                teamTwoWarriors.remove(warrior);
+                break;
+            default:
+                System.out.println("Error: Team number out of range [1,2]");
+                break;
+        }
     }
 
-    public void setTerrain(Terrain terrain){
-
+    public void saveWarrior(int team, Warrior warrior) {
+//todo
     }
 
-    public void setWeather(Weather weather){
-
+    public void setTerrain(Terrain terrain) {
+        this.terrain = terrain;
     }
 
-    public void setTactics(Tactic[] tactics){
-
+    public void setWeather(Weather weather) {
+        this.weather = weather;
     }
 
-
-
-
-
-
+    public void setTactics(Tactic[] tactics) {
+        this.tactics = tactics;
+    }
 }

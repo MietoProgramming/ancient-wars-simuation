@@ -5,7 +5,6 @@ public class Warrior {
     public boolean alive = true;
     private double dodgePercentage;
     private boolean canAttack = false;
-    public int team;
 
     public boolean getDamage(){
         return true; //TODO
@@ -21,6 +20,7 @@ public class Warrior {
 
     public void setLevel(int level){
         this.level = level;
+        this.dodgePercentage = level * 0.1;
     }
 
 }

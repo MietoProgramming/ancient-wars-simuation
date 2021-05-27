@@ -4,6 +4,7 @@ import com.mieto.environment.terrain.*;
 import com.mieto.environment.weather.*;
 import com.mieto.tactics.*;
 import com.mieto.warriors.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -14,43 +15,92 @@ public class Simulation {
     private SaveData saveDataObject = new SaveData();
 
     public void run() {
+        boolean run = true;
+        while (run) {
 
-        battlefield = new BattleMap();
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Set simulation details:");
-        setupTeam(1, scanner);
-        setupTeam(2, scanner);
-        Weather finalWeather = setupWeather(scanner);
-        Terrain finalTerrain = setupTerrain(scanner);
-        battlefield.setWeather(finalWeather);
-        battlefield.setTerrain(finalTerrain);
-        IterData.setNumberAllAliveWarriors(battlefield.teamOneWarriors.size() + battlefield.teamTwoWarriors.size());
-        int deaths;
-        while(battlefield.teamOneWarriors.size() != 0 || battlefield.teamTwoWarriors.size() != 0){
-            deaths = 0;
-            for (Warrior warrior :
-                    battlefield.teamOneWarriors) {
 
+            int winner = 0;
+            int deaths;
+            List<Warrior> warriorsFromTeamWinner = new ArrayList<>();
+
+            battlefield = new BattleMap();
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Set simulation details:");
+            setupTeam(1, scanner);
+            setupTeam(2, scanner);
+            Weather finalWeather = setupWeather(scanner);
+            Terrain finalTerrain = setupTerrain(scanner);
+            setBattlefield(finalWeather, finalTerrain);
+            IterData.setNumberAllAliveWarriors(battlefield.teamOneWarriors.size() + battlefield.teamTwoWarriors.size());
+            System.out.println("Level of backup details: [1 or 2]:");
+            int saveDataDetilsLevel = scanner.nextInt();
+            if (saveDataDetilsLevel == 2) {
+                setSaveDataLevel(saveDataDetilsLevel);
+            } else {
+                setSaveDataLevel(1);
             }
 
+            List<double> bonuses = new ArrayList<double>();
+            bonuses.add(battlefield.getMeleeBonus(1));
+            bonuses.add(battlefield.getMeleeBonus(2));
+            bonuses.add(battlefield.getRangeBonus(1));
+            bonuses.add(battlefield.getRangeBonus(2));
+            while (!battlefield.teamOneWarriors.isEmpty() || !battlefield.teamTwoWarriors.isEmpty()) {
+                deaths = 0;
+                double bonus;
+                for (Warrior warrior :
+                        battlefield.teamOneWarriors) {
+                    Warrior attackedWarrior = battlefield.teamTwoWarriors.get(0);
+                    bonus = warrior.type == "Melee" ? bonuses.get(0) : bonuses.get(2);
+                    warrior.attackWarrior(attackedWarrior, bonus);
+                    if (!attackedWarrior.alive) {
+                        battlefield.teamTwoWarriors.remove(attackedWarrior);
+                        deaths++;
+                        if (battlefield.teamTwoWarriors.isEmpty()) {
+                            winner = 1;
+                            warriorsFromTeamWinner = battlefield.teamOneWarriors;
+                            System.out.println("Team 1 Won!");
+                            break;
+                        }
+                    }
+                }
 
+                for (Warrior warrior :
+                        battlefield.teamTwoWarriors) {
+                    Warrior attackedWarrior = battlefield.teamOneWarriors.get(0);
+                    bonus = warrior.type == "Melee" ? bonuses.get(0) : bonuses.get(2);
+                    warrior.attackWarrior(attackedWarrior, bonus);
+                    if (!attackedWarrior.alive) {
+                        battlefield.teamOneWarriors.remove(attackedWarrior);
+                        deaths++;
+                        if (battlefield.teamOneWarriors.isEmpty()) {
+                            winner = 2;
+                            warriorsFromTeamWinner = battlefield.teamTwoWarriors;
+                            System.out.println("Team 2 Won!");
+                            break;
+                        }
+                    }
+                }
 
+                iterationsData.add(new IterData(deaths));
+            }
 
-            iterationsData.add(new IterData(deaths));
+            saveData(winner, warriorsFromTeamWinner);
+            System.out.println("Do you want to run simulation again?: [y,n]");
+            String answer = scanner.nextLine();
+            if ("n".equals(answer.trim())) {
+                run = false;
+            }
         }
-//todo
     }
 
-    public void saveIterationData() {
-//todo
+    public void saveData(int teamWinner, List<Warrior> warriorsFromTeamWinner) {
+        boolean resultOfSave = saveDataObject.saveData(iterationsData, teamWinner, warriorsFromTeamWinner);
+        System.out.println(resultOfSave ? "Data has been saved" : "Something went wrong. Author messed up :(");
     }
 
-    public void saveData() {
-//todo
-    }
-
-    public void setSaveDataLevel() {
-//todo
+    public void setSaveDataLevel(int level) {
+        saveDataObject.setDetailsLevel(level);
     }
 
     public void setBattlefield(Weather weather, Terrain terrain) {
@@ -117,7 +167,9 @@ public class Simulation {
                 tacticsArr[team - 1] = new TheTripleLineTactic();
                 break;
             default:
-                System.out.println("No tactic");
+                System.out.println("Default tactic: Square");
+                tacticsArr[team - 1] = new TheSquareTactic();
+                break;
         }
         battlefield.setTactics(tacticsArr);
     }
@@ -137,8 +189,8 @@ public class Simulation {
                 case "Valley":
                     return new Valley();
                 default:
-                    System.out.println("No tactic");
-                    continue;
+                    System.out.println("Default Terrain: Pass");
+                    return new Pass();
             }
         }
     }
@@ -158,8 +210,8 @@ public class Simulation {
                 case "Windy":
                     return new Windy();
                 default:
-                    System.out.println("No tactic");
-                    continue;
+                    System.out.println("Default Weather: Cloudy");
+                    return new Cloudy();
             }
         }
     }

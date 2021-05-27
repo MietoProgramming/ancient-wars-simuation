@@ -34,7 +34,11 @@ public class BattleMap {
     }
 
     public void saveWarrior(int team, Warrior warrior) {
-//todo
+        if (team == 1) {
+            this.teamOneWarriors.add(warrior);
+        } else {
+            this.teamTwoWarriors.add(warrior);
+        }
     }
 
     public void setTerrain(Terrain terrain) {
@@ -47,5 +51,13 @@ public class BattleMap {
 
     public void setTactics(Tactic[] tactics) {
         this.tactics = tactics;
+    }
+
+    public double getMeleeBonus(int team){
+        return terrain.meleeDifficulty + weather.meleeDifficulty + tactics[team-1].meleeDifficulty;
+    }
+
+    public double getRangeBonus(int team){
+        return terrain.rangeDifficulty + weather.rangeDifficulty + tactics[team-1].rangeDifficulty;
     }
 }

@@ -28,8 +28,8 @@ public class Warrior {
 
     public void setLevel(int level){
         this.level = level;
-        this.dodgePercentage = level * 0.1;
-        this.accurateAttackPercentage = level * 0.1;
+        this.dodgePercentage = level * 0.3;
+        this.accurateAttackPercentage = level * level * 0.05;
     }
 
 }

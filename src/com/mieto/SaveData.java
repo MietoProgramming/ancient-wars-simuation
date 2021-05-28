@@ -28,7 +28,7 @@ public class SaveData {
             FileWriter fileWriter = new FileWriter(fileLoc.getAbsoluteFile(),true);
             BufferedWriter bf = new BufferedWriter(fileWriter);
             Date date = new Date();
-            bf.write(date.toString());
+            bf.write(date.toString() + "\n");
             int iteration = 0;
             if(saveDetailsLevel == 2){
                 for (IterData data : dataToSave

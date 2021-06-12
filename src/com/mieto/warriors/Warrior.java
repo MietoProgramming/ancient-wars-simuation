@@ -8,6 +8,8 @@ public class Warrior {
     private double dodgePercentage;
     private double accurateAttackPercentage;
     public String type;
+    public int team;
+    public int battlefieldLine;
 
     public void getDamage(){
         alive = false;

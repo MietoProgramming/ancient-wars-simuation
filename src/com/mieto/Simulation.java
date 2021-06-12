@@ -14,13 +14,13 @@ import java.util.Scanner;
 
 public class Simulation {
     private BattleMap battlefield;
+    private int[] battlefieldLines = new int[]{1, 2, 3, 4, 5};
     private List<IterData> iterationsData = new ArrayList<IterData>();
     private SaveData saveDataObject = new SaveData();
 
     public void run() {
         boolean run = true;
         while (run) {
-
 
             int winner = 0;
             int deaths;
@@ -49,39 +49,49 @@ public class Simulation {
             bonuses.add(battlefield.getRangeBonus(1));
             bonuses.add(battlefield.getRangeBonus(2));
             String winnerInfo = "";
+
             while (!battlefield.teamOneWarriors.isEmpty() && !battlefield.teamTwoWarriors.isEmpty()) {
                 deaths = 0;
                 double bonus;
                 for (Warrior warrior :
                         battlefield.teamOneWarriors) {
-                    Warrior attackedWarrior = battlefield.teamTwoWarriors.get(0);
-                    bonus = warrior.type.equals("Melee") ? bonuses.get(0) : bonuses.get(2);
-                    warrior.attackWarrior(attackedWarrior, bonus);
-                    if (!attackedWarrior.alive) {
-                        battlefield.teamTwoWarriors.remove(attackedWarrior);
-                        deaths++;
-                        if (battlefield.teamTwoWarriors.isEmpty()) {
-                            winner = 1;
-                            warriorsFromTeamWinner = battlefield.teamOneWarriors;
-                            winnerInfo = "Team 1 Won!";
-                            break;
+
+                    Warrior attackedWarrior = getEnemyWarriorFromTheSameLine(warrior, battlefield.teamTwoWarriors);
+                    if (attackedWarrior == null) {
+                        if (warrior.battlefieldLine < battlefieldLines[4]) warrior.battlefieldLine += 1;
+                    } else {
+                        bonus = warrior.type.equals("Melee") ? bonuses.get(0) : bonuses.get(2);
+                        warrior.attackWarrior(attackedWarrior, bonus);
+                        if (!attackedWarrior.alive) {
+                            battlefield.teamTwoWarriors.remove(attackedWarrior);
+                            deaths++;
+                            if (battlefield.teamTwoWarriors.isEmpty()) {
+                                winner = 1;
+                                warriorsFromTeamWinner = battlefield.teamOneWarriors;
+                                winnerInfo = "Team 1 Won!";
+                                break;
+                            }
                         }
                     }
                 }
 
                 for (Warrior warrior :
                         battlefield.teamTwoWarriors) {
-                    Warrior attackedWarrior = battlefield.teamOneWarriors.get(0);
-                    bonus = warrior.type.equals("Melee") ? bonuses.get(0) : bonuses.get(2);
-                    warrior.attackWarrior(attackedWarrior, bonus);
-                    if (!attackedWarrior.alive) {
-                        battlefield.teamOneWarriors.remove(attackedWarrior);
-                        deaths++;
-                        if (battlefield.teamOneWarriors.isEmpty()) {
-                            winner = 2;
-                            warriorsFromTeamWinner = battlefield.teamTwoWarriors;
-                            winnerInfo = "Team 2 Won!";
-                            break;
+                    Warrior attackedWarrior = getEnemyWarriorFromTheSameLine(warrior, battlefield.teamOneWarriors);
+                    if (attackedWarrior == null) {
+                        if (warrior.battlefieldLine > battlefieldLines[0]) warrior.battlefieldLine -= 1;
+                    } else {
+                        bonus = warrior.type.equals("Melee") ? bonuses.get(0) : bonuses.get(2);
+                        warrior.attackWarrior(attackedWarrior, bonus);
+                        if (!attackedWarrior.alive) {
+                            battlefield.teamOneWarriors.remove(attackedWarrior);
+                            deaths++;
+                            if (battlefield.teamOneWarriors.isEmpty()) {
+                                winner = 2;
+                                warriorsFromTeamWinner = battlefield.teamTwoWarriors;
+                                winnerInfo = "Team 2 Won!";
+                                break;
+                            }
                         }
                     }
                 }
@@ -96,7 +106,16 @@ public class Simulation {
             if ("n".equals(answer.trim())) {
                 run = false;
             }
+            iterationsData.clear();
         }
+    }
+
+    private Warrior getEnemyWarriorFromTheSameLine(Warrior warrior, List<Warrior> enemyTeam) {
+        for (Warrior enemyWarrior :
+                enemyTeam) {
+            if (warrior.battlefieldLine == enemyWarrior.battlefieldLine) return enemyWarrior;
+        }
+        return null;
     }
 
     public void saveData(int teamWinner, List<Warrior> warriorsFromTeamWinner) {
@@ -122,45 +141,53 @@ public class Simulation {
                 System.out.println("Team " + team + ":");
                 System.out.println("Number of melee warriors on horses:");
                 nbOfWarriors = scanner.nextInt();
-                if(nbOfWarriors != 0){
+                if (nbOfWarriors > 0) {
                     System.out.println("Level of those warriors[1-3]:");
                     levelOfWarriors = scanner.nextInt();
                     if (levelOfWarriors < 1 || levelOfWarriors > 3) levelOfWarriors = 1;
                     for (int i = 1; i <= nbOfWarriors; i++) {
-                        battlefield.saveWarrior(team, new MeleeHorseWarrior(levelOfWarriors));
+                        Warrior warrior = new MeleeHorseWarrior(levelOfWarriors);
+                        warrior.team = team;
+                        battlefield.saveWarrior(team, warrior);
                     }
                 }
 
                 System.out.println("Number of melee warriors:");
                 nbOfWarriors = scanner.nextInt();
-                if(nbOfWarriors != 0){
+                if (nbOfWarriors > 0) {
                     System.out.println("Level of those warriors[1-3]:");
                     levelOfWarriors = scanner.nextInt();
                     if (levelOfWarriors < 1 || levelOfWarriors > 3) levelOfWarriors = 1;
                     for (int i = 1; i <= nbOfWarriors; i++) {
-                        battlefield.saveWarrior(team, new MeleeWarrior(levelOfWarriors));
+                        Warrior warrior = new MeleeWarrior(levelOfWarriors);
+                        warrior.team = team;
+                        battlefield.saveWarrior(team, warrior);
                     }
                 }
 
                 System.out.println("Number of range warriors on horses:");
                 nbOfWarriors = scanner.nextInt();
-                if(nbOfWarriors != 0){
+                if (nbOfWarriors > 0) {
                     System.out.println("Level of those warriors[1-3]:");
                     levelOfWarriors = scanner.nextInt();
                     if (levelOfWarriors < 1 || levelOfWarriors > 3) levelOfWarriors = 1;
                     for (int i = 1; i <= nbOfWarriors; i++) {
-                        battlefield.saveWarrior(team, new RangeHorseWarrior(levelOfWarriors));
+                        Warrior warrior = new RangeHorseWarrior(levelOfWarriors);
+                        warrior.team = team;
+                        battlefield.saveWarrior(team, warrior);
                     }
                 }
 
                 System.out.println("Number of range warriors:");
                 nbOfWarriors = scanner.nextInt();
-                if(nbOfWarriors != 0){
+                if (nbOfWarriors > 0) {
                     System.out.println("Level of those warriors[1-3]:");
                     levelOfWarriors = scanner.nextInt();
                     if (levelOfWarriors < 1 || levelOfWarriors > 3) levelOfWarriors = 1;
                     for (int i = 1; i <= nbOfWarriors; i++) {
-                        battlefield.saveWarrior(team, new RangeWarrior(levelOfWarriors));
+                        Warrior warrior = new RangeWarrior(levelOfWarriors);
+                        warrior.team = team;
+                        battlefield.saveWarrior(team, warrior);
                     }
                 }
 
@@ -195,7 +222,7 @@ public class Simulation {
 
     private Terrain setupTerrain(Scanner scanner) {
         while (true) {
-            try{
+            try {
                 System.out.println("Choose Terrain: [Forest, Pass, Mountain, Valley]");
                 String terrain = scanner.next();
 
@@ -212,8 +239,9 @@ public class Simulation {
                         System.out.println("Default Terrain: Pass");
                         return new Pass();
                 }
+            } catch (Exception e) {
+                System.out.println("Invalid data. Try Again");
             }
-            catch(Exception e){System.out.println("Invalid data. Try Again");}
         }
     }
 
@@ -236,7 +264,9 @@ public class Simulation {
                         System.out.println("Default Weather: Cloudy");
                         return new Cloudy();
                 }
-            }catch(Exception e){System.out.println("Invalid data. Try Again");}
+            } catch (Exception e) {
+                System.out.println("Invalid data. Try Again");
+            }
 
         }
     }

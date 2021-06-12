@@ -13,7 +13,7 @@ public class BattleMap {
     public List<Warrior> teamTwoWarriors = new ArrayList<>();
     public Terrain terrain;
     public Weather weather;
-    public Tactic[] tactics = new Tactic[2];
+    private Tactic[] tactics = new Tactic[2];
 
     public Tactic[] getTactics() {
         return tactics;

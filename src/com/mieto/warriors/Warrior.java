@@ -11,7 +11,12 @@ public class Warrior {
     public int team;
     public int battlefieldLine;
 
-    public void getDamage(){
+    public Warrior(String type, int level) {
+        setLevel(level);
+        this.type = type;
+    }
+
+    private void getDamage(){
         alive = false;
     }
 
@@ -23,12 +28,12 @@ public class Warrior {
         }
     }
 
-    public boolean dodgeAttack(){
+    private boolean dodgeAttack(){
         Random rand = new Random();
         return rand.nextDouble() < dodgePercentage;
     }
 
-    public void setLevel(int level){
+    private void setLevel(int level){
         this.level = level;
         this.dodgePercentage = level * 0.3;
         this.accurateAttackPercentage = level * level * 0.05;

@@ -8,7 +8,6 @@ import com.mieto.warriors.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-//todo unit tests
 //todo documentation
 //todo umls
 
@@ -31,6 +30,10 @@ public class Simulation {
             System.out.println("Set simulation details:");
             setupTeam(1, scanner);
             setupTeam(2, scanner);
+            if(battlefield.teamOneWarriors.size() == 0 && battlefield.teamTwoWarriors.size() == 0){
+                System.out.println("You can not run simulation without warriors! Clouds are not able to fight :). Try again");
+                continue;
+            }
             Weather finalWeather = setupWeather(scanner);
             Terrain finalTerrain = setupTerrain(scanner);
             setBattlefield(finalWeather, finalTerrain);
@@ -132,15 +135,17 @@ public class Simulation {
         battlefield.setTerrain(terrain);
     }
 
-    private void setupTeam(int team, Scanner scanner) {
+    private void setupTeam(int team, Scanner scanner) throws IndexOutOfBoundsException {
         int nbOfWarriors = 0;
         int levelOfWarriors = 1;
         String tactic;
         while (true) {
             try {
+
                 System.out.println("Team " + team + ":");
                 System.out.println("Number of melee warriors on horses:");
                 nbOfWarriors = scanner.nextInt();
+                if(nbOfWarriors < 0) throw new IndexOutOfBoundsException();
                 if (nbOfWarriors > 0) {
                     System.out.println("Level of those warriors[1-3]:");
                     levelOfWarriors = scanner.nextInt();
@@ -154,6 +159,7 @@ public class Simulation {
 
                 System.out.println("Number of melee warriors:");
                 nbOfWarriors = scanner.nextInt();
+                if(nbOfWarriors < 0) throw new IndexOutOfBoundsException();
                 if (nbOfWarriors > 0) {
                     System.out.println("Level of those warriors[1-3]:");
                     levelOfWarriors = scanner.nextInt();
@@ -167,6 +173,7 @@ public class Simulation {
 
                 System.out.println("Number of range warriors on horses:");
                 nbOfWarriors = scanner.nextInt();
+                if(nbOfWarriors < 0) throw new IndexOutOfBoundsException();
                 if (nbOfWarriors > 0) {
                     System.out.println("Level of those warriors[1-3]:");
                     levelOfWarriors = scanner.nextInt();
@@ -180,6 +187,7 @@ public class Simulation {
 
                 System.out.println("Number of range warriors:");
                 nbOfWarriors = scanner.nextInt();
+                if(nbOfWarriors < 0) throw new IndexOutOfBoundsException();
                 if (nbOfWarriors > 0) {
                     System.out.println("Level of those warriors[1-3]:");
                     levelOfWarriors = scanner.nextInt();
@@ -208,13 +216,15 @@ public class Simulation {
                         tacticsArr[team - 1] = new TheTripleLineTactic();
                         break;
                     default:
-                        System.out.println("Default tactic: Square");
+                        System.out.println("Invalid data. Default tactic: Square");
                         tacticsArr[team - 1] = new TheSquareTactic();
                         break;
                 }
                 battlefield.setTactics(tacticsArr);
             } catch (Exception e) {
                 System.out.println("Invalid data. Try Again");
+                scanner.nextLine();
+                continue;
             }
             break;
         }
@@ -224,6 +234,7 @@ public class Simulation {
         while (true) {
             try {
                 System.out.println("Choose Terrain: [Forest, Pass, Mountain, Valley]");
+                scanner.reset();
                 String terrain = scanner.next();
 
                 switch (terrain) {
@@ -236,7 +247,7 @@ public class Simulation {
                     case "Valley":
                         return new Valley();
                     default:
-                        System.out.println("Default Terrain: Pass");
+                        System.out.println("Invalid data. Default Terrain: Pass");
                         return new Pass();
                 }
             } catch (Exception e) {
@@ -249,6 +260,7 @@ public class Simulation {
         while (true) {
             try {
                 System.out.println("Choose Weather: [Cloudy, Rain, Sunny, Windy]");
+                scanner.reset();
                 String weather = scanner.next();
 
                 switch (weather) {

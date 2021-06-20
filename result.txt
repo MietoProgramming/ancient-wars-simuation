@@ -1,0 +1,39 @@
+Sat Jun 12 13:46:48 CEST 2021
+Number of iterations 0 
+Total deaths: 0 
+Winner: Team 0 
+Team 0 warriors at the end of simulation: 0 
+Team 1 warriors at the end of simulation: 0 
+------------------------------------------------------------------------------Mon Jun 14 11:18:44 CEST 2021
+Iteration 1 
+Deaths: 0 
+Iteration 2 
+Deaths: 8 
+Iteration 3 
+Deaths: 1 
+Iteration 4 
+Deaths: 5 
+Iteration 5 
+Deaths: 2 
+Iteration 6 
+Deaths: 6 
+Iteration 7 
+Deaths: 4 
+Iteration 8 
+Deaths: 1 
+Iteration 9 
+Deaths: 2 
+Iteration 10 
+Deaths: 1 
+Iteration 11 
+Deaths: 7 
+Iteration 12 
+Deaths: 4 
+Iteration 13 
+Deaths: 1 
+Number of iterations 13 
+Total deaths: 42 
+Winner: Team 2 
+Team 2 warriors at the end of simulation: 28 
+Team 1 warriors at the end of simulation: 0 
+------------------------------------------------------------------------------

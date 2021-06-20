@@ -4,12 +4,9 @@ import com.mieto.environment.terrain.*;
 import com.mieto.environment.weather.*;
 import com.mieto.tactics.*;
 import com.mieto.warriors.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-//todo documentation
-//todo umls
 
 /**
  * Simulation is the most important class in entire project.

@@ -11,12 +11,22 @@ import java.util.Scanner;
 //todo documentation
 //todo umls
 
+/**
+ * Simulation is the most important class in entire project.
+ * In this class we concede every bigger operation.
+ * @author Kamil Kałuża
+ * @version 1.0
+ */
+
 public class Simulation {
     private BattleMap battlefield;
     private int[] battlefieldLines = new int[]{1, 2, 3, 4, 5};
     private List<IterData> iterationsData = new ArrayList<IterData>();
     private SaveData saveDataObject = new SaveData();
 
+    /**
+     * Run main part of the simulation.
+     */
     public void run() {
         boolean run = true;
         while (run) {
@@ -104,6 +114,7 @@ public class Simulation {
             }
 
             saveData(winner, warriorsFromTeamWinner);
+            scanner.nextLine();
             System.out.println("Do you want to run simulation again?: [y,n]");
             String answer = scanner.next();
             if ("n".equals(answer.trim())) {
@@ -113,6 +124,12 @@ public class Simulation {
         }
     }
 
+    /**
+     *
+     * @param warrior warrior who attack another warrior
+     * @param enemyTeam team of enemies
+     * @return          enemy warrior from the same line
+     */
     private Warrior getEnemyWarriorFromTheSameLine(Warrior warrior, List<Warrior> enemyTeam) {
         for (Warrior enemyWarrior :
                 enemyTeam) {
@@ -121,20 +138,40 @@ public class Simulation {
         return null;
     }
 
+    /**
+     *
+     * @param teamWinner id of winners' warriors team
+     * @param warriorsFromTeamWinner list of winners' warriors
+     */
     public void saveData(int teamWinner, List<Warrior> warriorsFromTeamWinner) {
         boolean resultOfSave = saveDataObject.saveData(iterationsData, teamWinner, warriorsFromTeamWinner);
         System.out.println(resultOfSave ? "Data has been saved" : "Something went wrong. Author messed up :(");
     }
 
+    /**
+     *
+     * @param level level of details of saved data
+     */
     public void setSaveDataLevel(int level) {
         saveDataObject.setDetailsLevel(level);
     }
 
+    /**
+     *
+     * @param weather weather on the battlefield
+     * @param terrain terrain on the battlefield
+     */
     public void setBattlefield(Weather weather, Terrain terrain) {
         battlefield.setWeather(weather);
         battlefield.setTerrain(terrain);
     }
 
+    /**
+     *
+     * @param team id of winners' warriors team
+     * @param scanner scanner of System.in
+     * @throws IndexOutOfBoundsException exception when user input wrong data
+     */
     private void setupTeam(int team, Scanner scanner) throws IndexOutOfBoundsException {
         int nbOfWarriors = 0;
         int levelOfWarriors = 1;
@@ -230,6 +267,11 @@ public class Simulation {
         }
     }
 
+    /**
+     *
+     * @param scanner scanner of System.in
+     * @return          instance of terrain class
+     */
     private Terrain setupTerrain(Scanner scanner) {
         while (true) {
             try {
@@ -256,6 +298,11 @@ public class Simulation {
         }
     }
 
+    /**
+     *
+     * @param scanner scanner of System.in
+     * @return          instance of weather class
+     */
     private Weather setupWeather(Scanner scanner) {
         while (true) {
             try {

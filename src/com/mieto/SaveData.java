@@ -9,9 +9,19 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Allow to create log from simulation.
+ */
 public class SaveData {
     private int saveDetailsLevel = 1;
 
+    /**
+     *
+     * @param dataToSave list of data from every iteration of simulation
+     * @param team id of winners' warriors team
+     * @param warriors list of winners' warriors
+     * @return          either saving ended successfully or not
+     */
     public boolean saveData(List<IterData> dataToSave, int team, List<Warrior> warriors){
         File fileLoc = new File("result.txt");
         if(!fileLoc.exists()){
@@ -60,6 +70,10 @@ public class SaveData {
         }
     }
 
+    /**
+     *
+     * @param level level of details of saved data
+     */
     public void setDetailsLevel(int level){
         this.saveDetailsLevel = level;
     }
